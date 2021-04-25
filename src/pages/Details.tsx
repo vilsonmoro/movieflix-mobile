@@ -1,31 +1,86 @@
 import React from 'react';
-import { View, Image, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import arrowLeft from '../assets/arrowleft.png';
+import { StyleSheet, Dimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { doLogout, userToken } from '../services/auth';
+import { api } from '../services';
+import { useNavigation } from "@react-navigation/native";
 
+const deviceWidth = Dimensions.get('window').width;
 
-import movie from '../assets/movie.png';
-import { StyleSheet } from 'react-native';
+const Details = ({ route: {
+    params: { id },
+},
+}
+) => {
+    const navigation = useNavigation();
 
+    const [movie, setMovie] = useState({
+        id: null,
+        title: null,
+        subTitle: null,
+        year: Number,
+        imgUrl: null,
+        synopsis: null,
+        reviews: []
+    });
+    const [loading, setLoading] = useState(false);
 
-const Details: React.FC = () => {
+    async function getMovie() {
+        const authToken = await userToken();
+        setLoading(true);
+        const res = await api.get(`/movies/${id}`, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            }
+        });
+        setMovie(res.data);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        getMovie();
+    }, []);
+
+    async function handleLogout() {
+        doLogout();
+        navigation.navigate("Home");
+    }
+
     return (
         <View style={theme.container}>
             <View style={theme.navContainer}>
-                <Text style={theme.navText}>MovieFlix</Text>
+                <View style={theme.navGoback}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Catalog")}
+                    >
+                        <Image source={arrowLeft} style={{ width: 18, height: 18, marginHorizontal: 16, }} />
+                    </TouchableOpacity>
+                    <Text style={theme.navText}>MovieFlix</Text>
+                </View>
+                <TouchableOpacity
+                    onPress={() => handleLogout()}
+                    style={theme.logout}
+                >
+                    <Text >Sair</Text>
+                </TouchableOpacity>
             </View>
+
             <View style={theme.card}>
                 <Text style={theme.title}>
-                    O retorno do rei
+                    {movie.title}
                 </Text>
-                <Image source={movie} style={theme.draw} />
-                <Text style={theme.year}>2009</Text>
-                <Text style={theme.subtitle}>O inimigo está se movendo</Text>
+                <Image source={movie.imgUrl} style={theme.draw} />
+                <Text style={theme.year}>
+                    {movie.year}
+                </Text>
+                <Text style={theme.subtitle}>
+                    {movie.subTitle}
+                </Text>
                 <Text style={theme.sinopse}>Sinopse</Text>
                 <Text style={theme.textSinopse}>
-                    O confronto final entre as forças do bem e do mal que lutam pelo controle do futuro da Terra Média se aproxima.
-                    Sauron planeja um grande ataque a Minas Tirith, capital de Gondor, o que faz com que Gandalf e Pippin partam
-                    para o local na intenção de ajudar a resistência. Um exército é reunido por Theoden em Rohan, em mais uma
-                    tentativa de deter as forças de Sauron. Enquanto isso,
-                    Frodo, Sam e Gollum seguem sua viagem rumo à Montanha da Perdição para destruir o anel.
+                    {movie.synopsis}
                 </Text>
             </View>
             <View style={theme.card}>
@@ -39,12 +94,19 @@ const Details: React.FC = () => {
                     <Text>Salvar avaliação</Text>
                 </TouchableOpacity>
             </View>
+            
+            {
+                movie.reviews.map(review => (
+                    <View style={theme.card}>
+                        <Text style={theme.textAvaliar}>Avaliações</Text>
+                        <Text style={theme.textAutor}>xkk</Text>
+                        <Text style={theme.textSinopse}>Gosti mutio</Text>
+                    </View>
+                )
 
-            <View style={theme.card}>
-                <Text style={theme.textAvaliar}>Avaliações</Text>
-                <Text style={theme.textAutor}>Autor</Text>
-                <Text style={theme.textSinopse}>Gosti mutio</Text>
-            </View>
+                )
+            }
+
         </View>
     )
 }
@@ -52,7 +114,7 @@ const Details: React.FC = () => {
 const theme = StyleSheet.create({
     container: {
         backgroundColor: "#525252",
-        width: "100%",
+        width: deviceWidth,
     },
     draw: {
         width: "100%",
@@ -105,11 +167,18 @@ const theme = StyleSheet.create({
         borderRadius: 20,
     },
     navContainer: {
-        width: "100%",
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: "center",
+        width: deviceWidth,
         height: 50,
         backgroundColor: "#FFC700",
         paddingVertical: 13,
-        paddingLeft: 46,
+
+    },
+    navGoback:{
+        flexDirection: "row",
+        justifyContent: 'space-between',
     },
     navText: {
         fontSize: 18,
@@ -157,6 +226,19 @@ const theme = StyleSheet.create({
         fontWeight: "bold",
         color: "#FFFFFF",
         marginLeft: 40,
+    },
+    logout: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#000000",
+        marginRight: 10,
+        width: 75,
+        height: 26,
+        textAlign: 'center',
+        paddingTop: 3,
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#000000',
     },
 
 })

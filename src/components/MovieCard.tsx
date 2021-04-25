@@ -1,9 +1,7 @@
 import React from 'react';
-import { View, Image, Text, ImageSourcePropType } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, TouchableOpacity, View, Image, Text, ImageSourcePropType } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import movie from '../assets/movie.png';
-import { StyleSheet } from 'react-native';
+
 
 interface MovieProps {
     id: Number;
@@ -24,7 +22,7 @@ const MovieCard: React.FC<MovieProps> = ( {id, title, subtitle, year, imgUrl}) =
             <TouchableOpacity 
                 style={theme.buttonDetalhe} 
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate("Details")}
+                onPress={() => navigation.navigate("Details", { id })}
                 >
                 <Text style={theme.textDetalhe}>Ver detalhes</Text>
             </TouchableOpacity>

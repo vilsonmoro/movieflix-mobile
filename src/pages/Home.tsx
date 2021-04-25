@@ -1,10 +1,10 @@
 import React from "react";
-import { Text, View, Image } from "react-native";
-import { StyleSheet } from 'react-native';
+import {TouchableOpacity, Text, View, Image, Dimensions, StyleSheet } from "react-native";
 import arrow from '../assets/arrow.png';
 import draw from '../assets/draw.png';
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+
+const deviceWidth = Dimensions.get('window').width;
 
 const Home: React.FC = () => {
     const navigation = useNavigation();
@@ -28,7 +28,7 @@ const Home: React.FC = () => {
                 >
                     <Text style={text.buttonText}>FAZER LOGIN</Text>
                     <View style={theme.arrowContainer}>
-                        <Image source={arrow} />
+                        <Image source={arrow} style={{width: 7, height: 14,}}/>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -108,7 +108,7 @@ const theme = StyleSheet.create({
     },
 
     navContainer:{
-       width: "100%",
+       width: deviceWidth,
        height: 50,
        backgroundColor: "#FFC700",
        paddingVertical: 13,

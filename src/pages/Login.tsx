@@ -1,30 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Image, TextInput } from "react-native";
 import arrow from '../assets/arrow.png';
+import arrowLeft from '../assets/arrowleft.png';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { login } from "../services/auth";
+import { isAuthenticated, login } from "../services/auth";
 import eyesOpened from "../assets/eyesOpened.png";
 
 const Login: React.FC = () => {
     const navigation = useNavigation();
     const [hidePassword, setHidePassword] = useState(true);
+    const [userFetchData, setUserFetchData] = useState({});
     const [userInfo, setUserInfo] = useState({ username: "", password: "" });
 
     async function handleLogin() {
         const data = await login(userInfo);
-        console.warn(data);
-        console.log(data);
+        setUserFetchData(data);
+        navigation.navigate("Catalog");
     }
-
     return (
         <View style={theme.container}>
             <View style={theme.navContainer}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Home")}
+                >
+                    <Image source={arrowLeft} style={{ width: 18, height: 18, marginHorizontal: 16, }} />
+                </TouchableOpacity>
+
                 <Text style={text.navText}>MovieFlix</Text>
             </View>
 
-            <View style={theme.card}>
+            <View style={theme.form}>
                 <View style={theme.loginTextContainer}>
                     <Text style={text.textLogin}>Login</Text>
                 </View>
@@ -36,7 +43,7 @@ const Login: React.FC = () => {
                         keyboardType="email-address"
                         value={userInfo.username}
                         onChangeText={(e) => {
-                            const newUserInfo = {... userInfo };
+                            const newUserInfo = { ...userInfo };
                             newUserInfo.username = e;
                             setUserInfo(newUserInfo);
                         }}
@@ -46,7 +53,7 @@ const Login: React.FC = () => {
                             placeholder="Senha"
                             value={userInfo.password}
                             onChangeText={(e) => {
-                                const newUserInfo = {... userInfo };
+                                const newUserInfo = { ...userInfo };
                                 newUserInfo.password = e;
                                 setUserInfo(newUserInfo);
                             }}
@@ -67,7 +74,7 @@ const Login: React.FC = () => {
                 >
                     <Text style={text.buttonText}>FAZER LOGIN</Text>
                     <View style={theme.arrowContainer}>
-                        <Image source={arrow} />
+                        <Image source={arrow} style={{ width: 7, height: 14, }} />
                     </View>
                 </TouchableOpacity>
             </View>
@@ -100,7 +107,7 @@ const theme = StyleSheet.create({
     container: {
         backgroundColor: "#525252",
     },
-    card: {
+    form: {
         width: '100%',
         height: '100%',
         backgroundColor: "#525252",
@@ -132,10 +139,11 @@ const theme = StyleSheet.create({
 
     navContainer: {
         width: "100%",
+        flexDirection: "row",
         height: 50,
         backgroundColor: "#FFC700",
         paddingVertical: 13,
-        paddingLeft: 46,
+
     },
 
     //login
