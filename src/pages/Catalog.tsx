@@ -52,7 +52,7 @@ const Catalog: React.FC = () => {
             <ScrollView contentContainerStyle={theme.scrollContainer}>
                 {loading ? (<ActivityIndicator size='large' />)
                     : (movies.map(movie => (
-                        <MovieCard {...movie} />
+                        <MovieCard {...movie}  key={movie.id}/>
                     )))
                 }
             </ScrollView>

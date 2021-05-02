@@ -23,9 +23,16 @@ const Details = ({ route: {
         year: Number,
         imgUrl: null,
         synopsis: null,
-        reviews: []
+        reviews: [{
+            text: null,
+            user: {
+                name: null,
+            }
+        },]
     });
+
     const [loading, setLoading] = useState(false);
+    const [avaliacao, setAvaliacao] = useState("");
 
     async function getMovie() {
         const authToken = await userToken();
@@ -37,7 +44,7 @@ const Details = ({ route: {
         });
         setMovie(res.data);
         setLoading(false);
-    }
+      }
 
     useEffect(() => {
         getMovie();
@@ -46,6 +53,16 @@ const Details = ({ route: {
     async function handleLogout() {
         doLogout();
         navigation.navigate("Home");
+    }
+    async function handleSaveReview() {
+
+        const authToken = await userToken();
+        const data = avaliacao;       
+        const res = await api.post(`/reviews`, data, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            }
+        });
     }
 
     return (
@@ -66,47 +83,59 @@ const Details = ({ route: {
                     <Text >Sair</Text>
                 </TouchableOpacity>
             </View>
-
-            <View style={theme.card}>
-                <Text style={theme.title}>
-                    {movie.title}
-                </Text>
-                <Image source={movie.imgUrl} style={theme.draw} />
-                <Text style={theme.year}>
-                    {movie.year}
-                </Text>
-                <Text style={theme.subtitle}>
-                    {movie.subTitle}
-                </Text>
-                <Text style={theme.sinopse}>Sinopse</Text>
-                <Text style={theme.textSinopse}>
-                    {movie.synopsis}
-                </Text>
-            </View>
-            <View style={theme.card}>
-                <TextInput
-                    style={theme.inputAvaliacao}
-                    placeholder="Deixe sua avaliação aqui."
-                />
-                <TouchableOpacity
-                    style={theme.buttonAvaliar}
-                >
-                    <Text>Salvar avaliação</Text>
-                </TouchableOpacity>
-            </View>
-            
             {
-                movie.reviews.map(review => (
-                    <View style={theme.card}>
-                        <Text style={theme.textAvaliar}>Avaliações</Text>
-                        <Text style={theme.textAutor}>xkk</Text>
-                        <Text style={theme.textSinopse}>Gosti mutio</Text>
+                loading ? (<ActivityIndicator size='large' />) : (
+                    <View>
+                        <View style={theme.card}>
+                            <Text style={theme.title}>
+                                {movie.title}
+                            </Text>
+                            <Image source={movie.imgUrl} style={theme.draw} />
+                            <Text style={theme.year}>
+                                {movie.year}
+                            </Text>
+                            <Text style={theme.subtitle}>
+                                {movie.subTitle}
+                            </Text>
+                            <Text style={theme.sinopse}>Sinopse</Text>
+                            <Text style={theme.textSinopse}>
+                                {movie.synopsis}
+                            </Text>
+                        </View>
+                        {
+                            //visivel somente se usuario é MEMBER
+                            <View style={theme.card}>
+                                <TextInput
+                                    style={theme.inputAvaliacao}
+                                    placeholder="Deixe sua avaliação aqui."
+                                    value={avaliacao}
+                                    onChangeText={(e) => {
+                                        setAvaliacao(e);
+                                      }
+                                    }
+                                />
+                                <TouchableOpacity
+                                    style={theme.buttonAvaliar}
+                                    onPress={() => handleSaveReview()}
+                                >
+                                    <Text>Salvar avaliação</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
+                        {
+                            movie.reviews.map(review => (
+                                <View style={theme.card}>
+                                    <Text style={theme.textAvaliar}>Avaliações</Text>
+                                    <Text style={theme.textAutor}>{review.user.name}</Text>
+                                    <Text style={theme.textSinopse}>{review.text}</Text>
+                                </View>
+                            )
+
+                            )
+                        }
                     </View>
                 )
-
-                )
             }
-
         </View>
     )
 }
@@ -176,7 +205,7 @@ const theme = StyleSheet.create({
         paddingVertical: 13,
 
     },
-    navGoback:{
+    navGoback: {
         flexDirection: "row",
         justifyContent: 'space-between',
     },

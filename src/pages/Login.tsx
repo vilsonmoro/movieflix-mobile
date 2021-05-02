@@ -6,7 +6,8 @@ import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { isAuthenticated, login } from "../services/auth";
-import eyesOpened from "../assets/eyesOpened.png";
+import eyesOpened from '../assets/eyes-Opened.png';
+import eyesClosed from "../assets/eyes-closed.png";
 
 const Login: React.FC = () => {
     const navigation = useNavigation();
@@ -37,7 +38,7 @@ const Login: React.FC = () => {
                 </View>
 
                 <View>
-                    <TextInput style={theme.inputLogin}
+                    <TextInput style={text.textInputLogin}
                         placeholder="Email"
                         autoCapitalize="none"
                         keyboardType="email-address"
@@ -48,9 +49,11 @@ const Login: React.FC = () => {
                             setUserInfo(newUserInfo);
                         }}
                     />
-                    <View>
-                        <TextInput style={theme.inputLogin}
+                    <View style={theme.passwordGroup}>
+                        <TextInput style={text.textInputLogin}
                             placeholder="Senha"
+                            autoCapitalize="none"
+                            secureTextEntry={hidePassword}
                             value={userInfo.password}
                             onChangeText={(e) => {
                                 const newUserInfo = { ...userInfo };
@@ -60,8 +63,12 @@ const Login: React.FC = () => {
                         />
                         <TouchableOpacity
                             onPress={() => setHidePassword(!hidePassword)}
+                            style={{marginLeft: -40}}
                         >
-                            <Image source={hidePassword ? eyesOpened : eyesOpened} />
+                            <Image 
+                               source={hidePassword ? eyesOpened : eyesClosed} 
+                               style={{ width: 21, height: 22, }}
+                               />
                         </TouchableOpacity>
                     </View>
 
@@ -99,6 +106,17 @@ const text = StyleSheet.create({
         fontSize: 30,
         fontWeight: "normal",
         color: "#ffffff",
+    },
+
+    textInputLogin:{
+        height: 50,
+        width: 334,
+        backgroundColor: "#FEFEFE",
+        paddingHorizontal: 15,
+        color: "#bfbfbf",
+        fontSize: 16,
+        fontWeight: "normal",   
+        borderRadius: 10, 
     },
 });
 
@@ -152,16 +170,12 @@ const theme = StyleSheet.create({
         marginBottom: 50,
         marginHorizontal: 40,
     },
-    inputLogin: {
-        height: 50,
-        width: 334,
-        backgroundColor: "#FEFEFE",
-        marginBottom: 30,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        color: "#bfbfbf",
-        fontSize: 16,
-        fontWeight: "normal",
+ 
+    passwordGroup:{
+        marginTop: 30,
+        flexDirection: "row", 
+        alignItems: "center",
+        justifyContent: "center",
     },
 
 });
