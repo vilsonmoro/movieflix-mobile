@@ -3,7 +3,7 @@ import { View, Image, Text, TextInput, TouchableOpacity, ActivityIndicator } fro
 import arrowLeft from '../assets/arrowleft.png';
 import { StyleSheet, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react';
-import { doLogout, userToken } from '../services/auth';
+import { doLogout, isAllowedByRole, userToken } from '../services/auth';
 import { api } from '../services';
 import { useNavigation } from "@react-navigation/native";
 
@@ -33,6 +33,7 @@ const Details = ({ route: {
 
     const [loading, setLoading] = useState(false);
     const [avaliacao, setAvaliacao] = useState("");
+    const [podeAvaliar, setPodeAvaliar] = useState(false);
 
     async function getMovie() {
         const authToken = await userToken();
@@ -48,12 +49,21 @@ const Details = ({ route: {
 
     useEffect(() => {
         getMovie();
+        handlePodeAvaliar();
     }, []);
 
     async function handleLogout() {
         doLogout();
         navigation.navigate("Home");
     }
+
+    async function handlePodeAvaliar() {
+       const pode = await isAllowedByRole(['ROLE_MEMBER']);
+       console.log(`Pode=${pode}`)
+       setPodeAvaliar(pode);        
+    }
+
+
     async function handleSaveReview() {
 
         const authToken = await userToken();
@@ -61,7 +71,7 @@ const Details = ({ route: {
         const res = await api.post(`/reviews`, data, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
-            }
+            },
         });
     }
 
@@ -104,6 +114,7 @@ const Details = ({ route: {
                         </View>
                         {
                             //visivel somente se usuario é MEMBER
+                            podeAvaliar ? (
                             <View style={theme.card}>
                                 <TextInput
                                     style={theme.inputAvaliacao}
@@ -120,15 +131,17 @@ const Details = ({ route: {
                                 >
                                     <Text>Salvar avaliação</Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View>)
+                            :(<View></View>)
                         }
                         {
-                            movie.reviews.map(review => (
-                                <View style={theme.card}>
+                          movie.reviews.map(review => (
+                                <View style={theme.card} key={review.text}>
                                     <Text style={theme.textAvaliar}>Avaliações</Text>
                                     <Text style={theme.textAutor}>{review.user.name}</Text>
                                     <Text style={theme.textSinopse}>{review.text}</Text>
                                 </View>
+                                
                             )
 
                             )

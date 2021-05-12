@@ -76,11 +76,21 @@ export async function userToken(){
 export async function isAllowedByRole(routeRoles: Role[] = []) {
     if(routeRoles.length === 0){
         return true;
-    }    
-    //const  token = await  getAccessTokenDecoted();  
-    const token = await userToken();
-    const tokenDecoded = jwtDecode<AccessToken>(token) as AccessToken;
-    return routeRoles.some(role => tokenDecoded?.authorities.includes(role));
-  }
+    }
+   
+    const  token = getAccessTokenDecoted();
     
+    
+   // return routeRoles.some(role => tokenincludes(role));
+  }
 
+  export async function getAccessTokenDecoted(){
+    try{
+        const token = await userToken();
+        console.log(token);
+        const tokenDecoded = jwtDecode(token);
+        return tokenDecoded as AccessToken;
+    }catch(error){
+        return {} as AccessToken;
+    }   
+}
