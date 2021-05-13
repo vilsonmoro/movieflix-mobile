@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Image, TextInput } from "react-native";
+import { Text, View, Image, TextInput, Dimensions } from "react-native";
 import arrow from '../assets/arrow.png';
 import arrowLeft from '../assets/arrowleft.png';
 import { StyleSheet } from 'react-native';
@@ -9,11 +9,17 @@ import { isAuthenticated, login } from "../services/auth";
 import eyesOpened from '../assets/eyes-Opened.png';
 import eyesClosed from "../assets/eyes-closed.png";
 
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
+
 const Login: React.FC = () => {
     const navigation = useNavigation();
     const [hidePassword, setHidePassword] = useState(true);
     const [userFetchData, setUserFetchData] = useState({});
-    const [userInfo, setUserInfo] = useState({ username: "", password: "" });
+    const [userInfo, setUserInfo] = useState({
+        username: "bob@gmail.com",
+        password: "123456"
+    });
 
     async function handleLogin() {
         const data = await login(userInfo);
@@ -24,7 +30,7 @@ const Login: React.FC = () => {
         <View style={theme.container}>
             <View style={theme.navContainer}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("Home")}
+                    onPress={() => navigation.navigate("Home")}
                 >
                     <Image source={arrowLeft} style={{ width: 18, height: 18, marginHorizontal: 16, }} />
                 </TouchableOpacity>
@@ -63,12 +69,12 @@ const Login: React.FC = () => {
                         />
                         <TouchableOpacity
                             onPress={() => setHidePassword(!hidePassword)}
-                            style={{marginLeft: -40}}
+                            style={{ marginLeft: -40 }}
                         >
-                            <Image 
-                               source={hidePassword ? eyesOpened : eyesClosed} 
-                               style={{ width: 21, height: 22, }}
-                               />
+                            <Image
+                                source={hidePassword ? eyesOpened : eyesClosed}
+                                style={{ width: 21, height: 22, }}
+                            />
                         </TouchableOpacity>
                     </View>
 
@@ -108,15 +114,15 @@ const text = StyleSheet.create({
         color: "#ffffff",
     },
 
-    textInputLogin:{
+    textInputLogin: {
         height: 50,
         width: 334,
         backgroundColor: "#FEFEFE",
         paddingHorizontal: 15,
         color: "#bfbfbf",
         fontSize: 16,
-        fontWeight: "normal",   
-        borderRadius: 10, 
+        fontWeight: "normal",
+        borderRadius: 10,
     },
 });
 
@@ -124,6 +130,8 @@ const text = StyleSheet.create({
 const theme = StyleSheet.create({
     container: {
         backgroundColor: "#525252",
+        width: deviceWidth,
+        height: deviceHeight,
     },
     form: {
         width: '100%',
@@ -161,7 +169,6 @@ const theme = StyleSheet.create({
         height: 50,
         backgroundColor: "#FFC700",
         paddingVertical: 13,
-
     },
 
     //login
@@ -170,10 +177,10 @@ const theme = StyleSheet.create({
         marginBottom: 50,
         marginHorizontal: 40,
     },
- 
-    passwordGroup:{
+
+    passwordGroup: {
         marginTop: 30,
-        flexDirection: "row", 
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
     },

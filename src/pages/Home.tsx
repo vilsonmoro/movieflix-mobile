@@ -5,6 +5,7 @@ import draw from '../assets/draw.png';
 import { useNavigation } from "@react-navigation/native";
 
 const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
 
 const Home: React.FC = () => {
     const navigation = useNavigation();
@@ -70,7 +71,9 @@ const text = StyleSheet.create({
 
 const theme = StyleSheet.create({
     container: {
-       backgroundColor: "#525252",               
+       backgroundColor: "#525252",   
+       width: deviceWidth,
+       height: deviceHeight,            
     },
     card: {
         backgroundColor: "#525252",
@@ -107,9 +110,7 @@ const theme = StyleSheet.create({
         justifyContent: "center",
     },
 
-    navContainer:{
-       width: deviceWidth,
-       height: 50,
+    navContainer:{      
        backgroundColor: "#FFC700",
        paddingVertical: 13,
        paddingLeft: 46,

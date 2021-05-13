@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Image, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Image, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, ToastAndroid } from 'react-native';
 import arrowLeft from '../assets/arrowleft.png';
-import { StyleSheet, Dimensions } from 'react-native';
+import star from '../assets/star.png';
+import { StyleSheet } from 'react-native';
 import { useEffect, useState } from 'react';
 import { doLogout, isAllowedByRole, userToken } from '../services/auth';
 import { api } from '../services';
 import { useNavigation } from "@react-navigation/native";
-
-const deviceWidth = Dimensions.get('window').width;
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Details = ({ route: {
     params: { id },
@@ -24,6 +24,7 @@ const Details = ({ route: {
         imgUrl: null,
         synopsis: null,
         reviews: [{
+            id: 0,
             text: null,
             user: {
                 name: null,
@@ -45,11 +46,12 @@ const Details = ({ route: {
         });
         setMovie(res.data);
         setLoading(false);
-      }
+        setAvaliacao("");
+        handlePodeAvaliar();
+    }
 
     useEffect(() => {
         getMovie();
-        handlePodeAvaliar();
     }, []);
 
     async function handleLogout() {
@@ -58,21 +60,19 @@ const Details = ({ route: {
     }
 
     async function handlePodeAvaliar() {
-       const pode = await isAllowedByRole(['ROLE_MEMBER']);
-       console.log(`Pode=${pode}`)
-       setPodeAvaliar(pode);        
+        const pode = await isAllowedByRole(['ROLE_MEMBER']);
+        setPodeAvaliar(pode);
     }
 
-
     async function handleSaveReview() {
-
         const authToken = await userToken();
-        const data = avaliacao;       
+        const data = { movieId: movie.id, text: avaliacao };
         const res = await api.post(`/reviews`, data, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
         });
+        getMovie();
     }
 
     return (
@@ -100,7 +100,9 @@ const Details = ({ route: {
                             <Text style={theme.title}>
                                 {movie.title}
                             </Text>
+
                             <Image source={movie.imgUrl} style={theme.draw} />
+
                             <Text style={theme.year}>
                                 {movie.year}
                             </Text>
@@ -115,33 +117,38 @@ const Details = ({ route: {
                         {
                             //visivel somente se usuario é MEMBER
                             podeAvaliar ? (
-                            <View style={theme.card}>
-                                <TextInput
-                                    style={theme.inputAvaliacao}
-                                    placeholder="Deixe sua avaliação aqui."
-                                    value={avaliacao}
-                                    onChangeText={(e) => {
-                                        setAvaliacao(e);
-                                      }
-                                    }
-                                />
-                                <TouchableOpacity
-                                    style={theme.buttonAvaliar}
-                                    onPress={() => handleSaveReview()}
-                                >
-                                    <Text>Salvar avaliação</Text>
-                                </TouchableOpacity>
-                            </View>)
-                            :(<View></View>)
+                                <View style={theme.card}>
+                                    <TextInput
+                                        style={theme.inputAvaliacao}
+                                        placeholder="Deixe sua avaliação aqui."
+                                        value={avaliacao}
+                                        onChangeText={(e) => {
+                                            setAvaliacao(e);
+                                        }
+                                        }
+                                    />
+                                    <TouchableOpacity
+                                        style={theme.buttonAvaliar}
+                                        onPress={() => handleSaveReview()}
+
+                                    >
+                                        <Text>Salvar avaliação</Text>
+                                    </TouchableOpacity>
+                                </View>)
+                                : (<View></View>)
                         }
                         {
-                          movie.reviews.map(review => (
-                                <View style={theme.card} key={review.text}>
+                            movie.reviews.map(review => (
+                                <ScrollView contentContainerStyle={theme.card} key={review.id}>
                                     <Text style={theme.textAvaliar}>Avaliações</Text>
-                                    <Text style={theme.textAutor}>{review.user.name}</Text>
+                                    <View style={theme.containerAutor}>
+                                        <Image source={star} style={{ width: 12, height: 12, }} />
+                                        <Text style={theme.textAutor}>{review.user.name}</Text>
+                                    </View>
+                                    
                                     <Text style={theme.textSinopse}>{review.text}</Text>
-                                </View>
-                                
+                                </ScrollView>
+
                             )
 
                             )
@@ -155,12 +162,15 @@ const Details = ({ route: {
 
 const theme = StyleSheet.create({
     container: {
+        margin: 0,
         backgroundColor: "#525252",
-        width: deviceWidth,
     },
+
     draw: {
         width: "100%",
         height: 227,
+        marginTop: 15,
+        resizeMode: 'stretch',
     },
     card: {
         flex: 1,
@@ -175,12 +185,14 @@ const theme = StyleSheet.create({
         fontWeight: "bold",
         color: "#FFFFFF",
         marginLeft: 25,
+        marginTop: 17,
     },
     year: {
         fontSize: 24,
         fontWeight: "bold",
         color: "#FFC700",
         marginLeft: 25,
+        marginTop: 14,
     },
     subtitle: {
         fontSize: 18,
@@ -212,11 +224,9 @@ const theme = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         alignItems: "center",
-        width: deviceWidth,
         height: 50,
         backgroundColor: "#FFC700",
         paddingVertical: 13,
-
     },
     navGoback: {
         flexDirection: "row",
@@ -266,21 +276,28 @@ const theme = StyleSheet.create({
     textAutor: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "#FFFFFF",
-        marginLeft: 40,
+        color: "#FFFFFF",    
+        paddingLeft: 15,    
     },
     logout: {
         borderRadius: 10,
         borderWidth: 1,
         borderColor: "#000000",
-        marginRight: 10,
+        marginRight: 20,
+        marginVertical: 14,
         width: 75,
         height: 26,
         textAlign: 'center',
-        paddingTop: 3,
         fontSize: 14,
         fontWeight: 'bold',
         color: '#000000',
+    },
+
+    containerAutor: {
+       display: 'flex',
+       flexDirection: 'row',
+       marginLeft: 39,
+       paddingVertical: 4,
     },
 
 })

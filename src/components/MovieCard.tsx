@@ -6,19 +6,19 @@ import { useNavigation } from "@react-navigation/native";
 interface MovieProps {
     id: Number;
     title: string;
-    subtitle: string;
+    subTitle: string;
     year: Number;
     imgUrl: ImageSourcePropType;
 }
 
-const MovieCard: React.FC<MovieProps> = ( {id, title, subtitle, year, imgUrl}) => {
+const MovieCard: React.FC<MovieProps> = ( {id, title, subTitle, year, imgUrl}) => {
     const navigation = useNavigation();
     return (
         <View style={theme.container}>
             <Image source={imgUrl} style={theme.draw} />
             <Text style={theme.title}> {title} </Text>
             <Text style={theme.year}> {year} </Text>
-            <Text style={theme.subtitle}> {subtitle} </Text>
+            <Text style={theme.subtitle}> {subTitle} </Text>
             <TouchableOpacity 
                 style={theme.buttonDetalhe} 
                 activeOpacity={0.8}
@@ -41,13 +41,15 @@ const theme = StyleSheet.create({
     },
     draw: {
         width: "100%",
-        height: 227,
+        height: 227,   
+        resizeMode:'stretch', 
     },
     title: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#ffffff",
         marginLeft: 15,
+        marginTop:20,
     },
     year: {
         fontSize: 14,
