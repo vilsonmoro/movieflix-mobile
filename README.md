@@ -10,3 +10,6 @@ password: 123456
 Usuário com perfil de VISITOR
 user: ana@gmail.com
 password: 123456
+
+Git do projeto backend e frontend
+https://github.com/vilsonmoro/desafiomovieflix.git
