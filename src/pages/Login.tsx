@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { isAuthenticated, login } from "../services/auth";
-import eyesOpened from '../assets/eyes-Opened.png';
+import eyesOpened from '../assets/eyes-opened.png';
 import eyesClosed from "../assets/eyes-closed.png";
 
 const deviceWidth = Dimensions.get('window').width;
@@ -17,8 +17,8 @@ const Login: React.FC = () => {
     const [hidePassword, setHidePassword] = useState(true);
     const [userFetchData, setUserFetchData] = useState({});
     const [userInfo, setUserInfo] = useState({
-        username: "bob@gmail.com",
-        password: "123456"
+        username: "",
+        password: ""
     });
 
     async function handleLogin() {
