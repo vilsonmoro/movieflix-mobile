@@ -75,14 +75,15 @@ const Catalog: React.FC = () => {
       </View>
       <View style={theme.filterContainer}>
         <TouchableOpacity
+          style={theme.itemFilterContainer}
           onPress={() => {
             setShowGenre(!showGenre);
           }}
         >
           <Text style={theme.textGenre}>
-            {genre ? 'Escolha um genero' : genres}
+            {genre ? 'Escolha um genero' : genre.name}
           </Text>
-          <Image source={seta} style={{ width: 18, height: 18, marginHorizontal: 16, }} />
+          <Image source={seta} style={{ width: 9, height: 14}} />
         </TouchableOpacity>
         <ScrollView>
           <Modal
@@ -129,7 +130,6 @@ const theme = StyleSheet.create({
     paddingBottom: 60,
   },
   filterContainer: {
-    height: 80,
     backgroundColor: "#6C6C6C",
     shadowColor: "#00000025",
     shadowOffset: {
@@ -144,6 +144,14 @@ const theme = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
   },
+  itemFilterContainer:{
+    display: "flex",
+    borderRadius: 10,
+    borderColor: '#E1E1E1',
+    borderWidth: 2,
+    padding: 12,
+  },
+
   navContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -152,6 +160,7 @@ const theme = StyleSheet.create({
     paddingVertical: 13,
     paddingLeft: 51,
   },
+ 
   navText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -208,10 +217,7 @@ const theme = StyleSheet.create({
   textGenre: {
     fontWeight: 'normal',
     fontSize: 16,
-    color: "#FFFFFF",
-    borderRadius: 10,
-    borderColor: '#E1E1E1',
-    borderWidth: 2,
+    color: "#FFFFFF",    
   }
 })
 
