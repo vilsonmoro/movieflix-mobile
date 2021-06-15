@@ -146,7 +146,6 @@ const Details = ({ route: {
                                     
                                     <Text style={theme.textSinopse}>{review.text}</Text>
                                 </ScrollView>
-
                             ))
                         }
                     </View>

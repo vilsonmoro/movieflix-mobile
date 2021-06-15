@@ -3,11 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import {
   Text, View, StyleSheet,
   TouchableOpacity, ScrollView,
-  ActivityIndicator, Modal
+  ActivityIndicator, Modal,
+  Image
 } from "react-native";
 import { doLogout, userToken } from "../services/auth";
 import { api } from "../services";
 import MovieCard from "../components/MovieCard";
+import { seta } from "../assets/Seta.png";
 
 type IGenre = {
   id: string;
@@ -62,7 +64,7 @@ const Catalog: React.FC = () => {
 
 
   return (
-    <View style={theme.container}>
+    <ScrollView contentContainerStyle={theme.container}>
       <View style={theme.navContainer}>
         <Text style={theme.navText}>MovieFlix</Text>
         <TouchableOpacity
@@ -80,6 +82,7 @@ const Catalog: React.FC = () => {
           <Text style={theme.textGenre}>
             {genre ? 'Escolha um genero' : genres}
           </Text>
+          <Image source={seta} style={{ width: 18, height: 18, marginHorizontal: 16, }} />
         </TouchableOpacity>
         <ScrollView>
           <Modal
@@ -106,15 +109,15 @@ const Catalog: React.FC = () => {
           </Modal>
         </ScrollView>
       </View>
-      <ScrollView contentContainerStyle={theme.scrollContainer}>
+      <View style={theme.scrollContainer}>
         {
           loading ? (<ActivityIndicator size='large' />)
             : (movies.map(movie => (
               <MovieCard {...movie} key={movie.id} />
             )))
         }
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 
 }
@@ -123,6 +126,7 @@ const Catalog: React.FC = () => {
 const theme = StyleSheet.create({
   container: {
     backgroundColor: "#525252",
+    paddingBottom: 60,
   },
   filterContainer: {
     height: 80,
@@ -168,12 +172,7 @@ const theme = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
   },
-  filterText: {
-    fontWeight: 'normal',
-    fontSize: 22,
-    color: "#FFFFFF",
-    backgroundColor: "#E1E1E1",
-  },
+
   modalContainer: {
     width: "100%",
     height: "100%",
@@ -208,8 +207,11 @@ const theme = StyleSheet.create({
   },
   textGenre: {
     fontWeight: 'normal',
-    fontSize: 22,
+    fontSize: 16,
     color: "#FFFFFF",
+    borderRadius: 10,
+    borderColor: '#E1E1E1',
+    borderWidth: 2,
   }
 })
 

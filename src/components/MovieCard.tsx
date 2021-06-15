@@ -44,7 +44,8 @@ const theme = StyleSheet.create({
     },
     draw: {
         width: "100%",
-        height: 227,   
+        height: 227,  
+        resizeMode:'stretch', 
         
     },
     title: {
