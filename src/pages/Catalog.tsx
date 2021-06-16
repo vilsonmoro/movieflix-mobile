@@ -9,10 +9,11 @@ import {
 import { doLogout, userToken } from "../services/auth";
 import { api } from "../services";
 import MovieCard from "../components/MovieCard";
-import { seta } from "../assets/Seta.png";
+import seta from "../assets/seta.png";
+
 
 type IGenre = {
-  id: string;
+  id: number;
   name: string;
 }
 
@@ -20,7 +21,7 @@ const Catalog: React.FC = () => {
   const navigation = useNavigation();
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
-  const [genre, setGenre] = useState([]);
+  const [genre, setGenre] = useState<IGenre>({ id: 0, name: "" });
   const [showGenre, setShowGenre] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +40,7 @@ const Catalog: React.FC = () => {
   async function fillMovies() {
     const authToken = await userToken();
     setLoading(true);
-    const url = genre ? `&genreId=${genre}` : ``;
+    const url = genre.id > 0 ? `&genreId=${genre.id}` : ``;
     const res = await api.get(`/movies?page=0&linesPerPage=12&direction=ASC${url}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -81,9 +82,9 @@ const Catalog: React.FC = () => {
           }}
         >
           <Text style={theme.textGenre}>
-            {genre ? 'Escolha um genero' : genre.name}
+            {genre.id == 0 ? 'Escolha um genero' : genre.name}
           </Text>
-          <Image source={seta} style={{ width: 9, height: 14}} />
+            <Image source={seta} style={{ width: 9, height: 14, margin: 10, }} />
         </TouchableOpacity>
         <ScrollView>
           <Modal
@@ -97,7 +98,7 @@ const Catalog: React.FC = () => {
                     key={g.id}
                     onPress={
                       () => {
-                        setGenre(g.id);
+                        setGenre(g);
                         setShowGenre(!showGenre);
                       }
                     }
@@ -123,7 +124,6 @@ const Catalog: React.FC = () => {
 
 }
 
-
 const theme = StyleSheet.create({
   container: {
     backgroundColor: "#525252",
@@ -144,12 +144,24 @@ const theme = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
   },
-  itemFilterContainer:{
-    display: "flex",
+  itemFilterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderRadius: 10,
     borderColor: '#E1E1E1',
     borderWidth: 2,
     padding: 12,
+  },
+
+  arrowContainer: {
+    height: 50,
+    width: 50,
+    backgroundColor: "#6C6C6C",
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   navContainer: {
@@ -160,15 +172,16 @@ const theme = StyleSheet.create({
     paddingVertical: 13,
     paddingLeft: 51,
   },
- 
+
   navText: {
     fontSize: 18,
     fontWeight: "bold",
     justifyContent: "center",
   },
   scrollContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
   },
+
   logout: {
     borderRadius: 10,
     borderWidth: 1,
@@ -188,15 +201,15 @@ const theme = StyleSheet.create({
     backgroundColor: "#00000025",
     alignItems: 'center',
     justifyContent: 'center',
-  }, 
-  
+  },
+
   modalContent: {
     width: 300,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: "10%",
     backgroundColor: "#ffffff",
-    padding: 20,
+    padding: 10,
     borderRadius: 20,
     shadowColor: "#000000",
     shadowOffset: {
@@ -211,13 +224,13 @@ const theme = StyleSheet.create({
     width: "100%",
     padding: 10,
     marginVertical: 5,
-    borderRadius: 5,    
+    borderRadius: 5,
     backgroundColor: "#6C6C6C",
   },
   textGenre: {
     fontWeight: 'normal',
     fontSize: 16,
-    color: "#FFFFFF",    
+    color: "#FFFFFF",
   }
 })
 

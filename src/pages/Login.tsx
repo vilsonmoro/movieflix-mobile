@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { login } from "../services/auth";
 
+
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
