@@ -19,8 +19,8 @@ const Login: React.FC = () => {
   const [hidePassword, setHidePassword] = useState(true);
   const [userFetchData, setUserFetchData] = useState({});
   const [userInfo, setUserInfo] = useState({
-    username: "bob@gmail.com",
-    password: "123456"
+    username: "",
+    password: ""
   });
 
   async function handleLogin() {
